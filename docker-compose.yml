@@ -16,7 +16,7 @@ services:
       - 3357:3357
     build: .
     working_dir: /var/app
-    entrypoint: "npm run up:mock-service"
+    entrypoint: "npm run up:mock-server"
     env_file:
       - .env.docker
   postgres:
