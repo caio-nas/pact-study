@@ -1,0 +1,18 @@
+services:
+  pact:
+    platform: linux/amd64
+    image: "node:14.20.0"
+    env_file:
+      - .env.docker
+    working_dir: /var/app
+    volumes:
+      - ./:/var/app
+    depends_on:
+      - pact_broker
+  pact_broker:
+    platform: linux/amd64
+    image: "pactfoundation/pact-broker:latest"
+    ports:
+      - 9292:9292
+    environment:
+      - PACT_BROKER_ALLOW_PUBLIC_READ=true
