@@ -19,10 +19,30 @@ services:
     entrypoint: "npm run up:mock-service"
     env_file:
       - .env.docker
+  postgres:
+    image: postgres
+    healthcheck:
+      test: psql postgres --command "select 1" -U postgres
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
   pact_broker:
     platform: linux/amd64
     image: "pactfoundation/pact-broker:latest"
     ports:
       - 9292:9292
+    depends_on:
+      - postgres
     environment:
       - PACT_BROKER_ALLOW_PUBLIC_READ=true
+      - PACT_BROKER_PORT=9292
+      - PACT_BROKER_DATABASE_URL="postgres://postgres:password@postgres/postgres"
+      - PACT_BROKER_LOG_LEVEL=INFO
+      - PACT_BROKER_SQL_LOG_LEVEL=DEBUG
+      - PACT_BROKER_DATABASE_CONNECT_MAX_RETRIES="5"
+      - PACT_BROKER_BASE_URL='https://localhost http://localhost http://localhost:9292 http://pact_broker:9292'
+volumes:
+  postgres_volume:
