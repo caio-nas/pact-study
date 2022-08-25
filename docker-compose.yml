@@ -9,6 +9,16 @@ services:
       - ./:/var/app
     depends_on:
       - pact_broker
+      - mock_server
+  mock_server:
+    platform: linux/amd64
+    ports:
+      - 3357:3357
+    build: .
+    working_dir: /var/app
+    entrypoint: "npm run up:mock-service"
+    env_file:
+      - .env.docker
   pact_broker:
     platform: linux/amd64
     image: "pactfoundation/pact-broker:latest"
